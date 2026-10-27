@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+
+# Secrets
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Flask
+instance/
+
+# OS
+.DS_Store
+Thumbs.db
