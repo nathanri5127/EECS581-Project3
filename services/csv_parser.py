@@ -1,5 +1,5 @@
 import pandas as pd
-
+from services.auto_categorizer import auto_categorize
 DATE_COLUMNS = [
     "date",
     "transaction date",
@@ -70,30 +70,28 @@ def parse_transactions(file):
     transactions = []
 
     for _, row in df.iterrows():
+        description = row[description_col]
+        amount = float(row[amount_col])
+
+        # Use the bank's category if the CSV has a non-empty one,
+        # otherwise categorize automatically.
+        category = None
+        if category_col and pd.notna(row[category_col]):
+            category = str(row[category_col]).strip() or None
+        if category is None:
+            category = auto_categorize(description, amount)
+
         transactions.append({
             "date":
                 row[date_col],
 
             "description":
-                row[
-                    description_col
-                ],
+                description,
 
             "amount":
-                float(
-                    row[
-                        amount_col
-                    ]
-                ),
+                amount,
 
             "category":
-                (
-                    row[
-                        category_col
-                    ]
-                    if category_col
-                    else
-                    "Uncategorized"
-                )
+                category
         })
     return transactions
