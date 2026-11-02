@@ -43,7 +43,7 @@
                 <h3>Total Expenses</h3>
 
                 <h2>
-                    ${{ "%.2f"|format(expenses) }}
+                    -${{ "%.2f"|format(expenses|abs) }}
                 </h2>
 
             </div>
@@ -53,7 +53,7 @@
                 <h3>Net Balance</h3>
 
                 <h2>
-                    ${{ "%.2f"|format(net_balance) }}
+                    {% if net_balance < 0 %}-{% endif %}${{ "%.2f"|format(net_balance|abs) }}
                 </h2>
 
             </div>
@@ -128,7 +128,7 @@
             {% else %}
 
                 <span style="color:red">
-                    ${{ "%.2f"|format(transaction.amount) }}
+                    -${{ "%.2f"|format(transaction.amount|abs) }}
                 </span>
 
             {% endif %}
