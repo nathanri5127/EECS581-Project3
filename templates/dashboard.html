@@ -107,7 +107,7 @@
 
     {% for transaction in transactions %}
 
-    <tr>
+    <tr id="transaction-{{ transaction.id }}">
 
         <td>
             {{ transaction.date }}
@@ -136,9 +136,32 @@
         </td>
 
         <td>
-            {{ transaction.category }}
-        </td>
+            <form
+                action="{{ url_for('dashboard.update_category', transaction_id=transaction.id) }}"
+                method="POST"
+                class="category-form"
+            >
+                <select
+                    name="category"
+                    onchange="this.form.submit()"
+                >
+                    {% if transaction.category not in categories %}
+                        <option selected disabled>
+                            {{ transaction.category }}
+                        </option>
+                    {% endif %}
 
+                    {% for category in categories %}
+                        <option
+                            value="{{ category }}"
+                            {% if category == transaction.category %}selected{% endif %}
+                        >
+                            {{ category }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </td>
     </tr>
 
     {% endfor %}
