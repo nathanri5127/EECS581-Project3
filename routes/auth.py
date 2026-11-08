@@ -9,7 +9,8 @@ from flask import (
 
 from flask_login import (
     login_user,
-    logout_user
+    logout_user,
+    login_required
 )
 
 from extensions import db
@@ -91,6 +92,7 @@ def login():
     return render_template("login.html")
 
 @auth_bp.route("/logout")
+@login_required
 def logout():
     logout_user()
     return redirect(url_for("auth.login"))
