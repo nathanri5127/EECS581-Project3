@@ -2,7 +2,8 @@ from flask import (
     Blueprint,
     request,
     redirect,
-    url_for
+    url_for,
+    flash
 )
 from flask_login import (
     login_required,
@@ -26,7 +27,12 @@ def upload_csv():
     file = request.files["csv_file"]
     if not file:
         return "No file provided"
-    transactions = parse_transactions(file)
+    try:
+        transactions = parse_transactions(file)
+    except Exception as e:
+        flash(str(e), "error")
+        return redirect(url_for("dashboard.dashboard"))
+    
     for transaction in transactions:
         new_transaction = Transaction(
             user_id=current_user.id,

@@ -62,7 +62,15 @@
         <div class="card">
 
             <h2>Upload Transactions</h2>
-
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             <form
                 action="/upload-csv"
                 method="POST"
