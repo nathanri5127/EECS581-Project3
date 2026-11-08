@@ -3,6 +3,7 @@ from flask_migrate import Migrate
 from extensions import db
 from routes.auth import auth_bp
 from routes.dashboard import dashboard_bp
+from routes.patterns import patterns_bp # added by Fabrizio Falcon
 from routes.upload import upload_bp
 
 app = Flask(__name__)
@@ -17,7 +18,9 @@ migrate = Migrate(app, db)
 
 app.register_blueprint(auth_bp)
 
-app.register_blueprint(dashboard_bp)
+app.register_blueprint(dashboard_bp) # added by Fabrizio Falcon
+
+app.register_blueprint(patterns_bp)
 
 app.register_blueprint(upload_bp)
 
