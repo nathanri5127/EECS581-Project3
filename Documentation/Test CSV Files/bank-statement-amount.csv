@@ -1,0 +1,42 @@
+date,description,amount,balance,category
+2025-01-01,Opening Balance,0,4250.00,Opening Balance
+2025-01-02,Direct Deposit - Payroll,3850.00,8100.00,Income
+2025-01-03,Whole Foods Market,-87.32,8012.68,Groceries
+2025-01-04,Shell Gas Station,-52.18,7960.50,Transportation
+2025-01-05,Netflix Subscription,-15.99,7944.51,Entertainment
+2025-01-06,Transfer to Savings,-500.00,7444.51,Savings
+2025-01-07,Starbucks,-6.45,7438.06,Dining
+2025-01-08,Electric Company,-128.50,7309.56,Utilities
+2025-01-09,Rent Payment,-1750.00,5559.56,Housing
+2025-01-10,Amazon.com,-43.97,5515.59,Shopping
+2025-01-11,Trader Joe's,-62.84,5452.75,Groceries
+2025-01-12,Uber Ride,-18.50,5434.25,Transportation
+2025-01-13,AT&T Wireless,-85.00,5349.25,Utilities
+2025-01-14,Chipotle,-12.95,5336.30,Dining
+2025-01-15,Freelance Payment,750.00,6086.30,Income
+2025-01-16,Direct Deposit - Payroll,3850.00,9936.30,Income
+2025-01-17,Whole Foods Market,-94.17,9842.13,Groceries
+2025-01-18,Planet Fitness,-29.99,9812.14,Health
+2025-01-19,Home Depot,-156.33,9655.81,Home
+2025-01-20,Insurance Premium,-220.00,9435.81,Insurance
+2025-01-21,Water Bill,-45.00,9390.81,Utilities
+2025-01-22,Target,-67.42,9323.39,Shopping
+2025-01-23,Spotify Subscription,-10.99,9312.40,Entertainment
+2025-01-24,Costco,-145.88,9166.52,Groceries
+2025-01-25,Restaurant - Olive Garden,-58.30,9108.22,Dining
+2025-01-26,Parking Meter,-8.00,9100.22,Transportation
+2025-01-27,Doctor Visit Copay,-40.00,9060.22,Health
+2025-01-28,Internet - Comcast,-79.99,8980.23,Utilities
+2025-01-29,Transfer to Savings,-500.00,8480.23,Savings
+2025-01-30,Venmo - Refund from Friend,35.00,8515.23,Refund
+2025-01-31,Trader Joe's,-71.56,8443.67,Groceries
+2025-02-01,Direct Deposit - Payroll,3850.00,12293.67,Income
+2025-02-02,Rent Payment,-1750.00,10543.67,Housing
+2025-02-03,Whole Foods Market,-82.19,10461.48,Groceries
+2025-02-04,Shell Gas Station,-48.75,10412.73,Transportation
+2025-02-05,Electric Company,-135.20,10277.53,Utilities
+2025-02-06,Amazon.com,-29.99,10247.54,Shopping
+2025-02-07,Starbucks,-5.80,10241.74,Dining
+2025-02-08,Car Wash,-24.99,10216.75,Transportation
+2025-02-09,Amazon Refund,43.97,10260.72,Refund
+2025-02-10,Transfer to Savings,-500.00,9760.72,Savings
