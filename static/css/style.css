@@ -99,3 +99,12 @@ td {
     border-radius: 8px;
     border: 1px solid #ef4444;
 }
+
+.deficit-row {
+    background-color: #fef2f2;
+}
+
+.deficit-flag {
+    color: #991b1b;
+    font-weight: bold;
+}

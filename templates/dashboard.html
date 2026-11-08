@@ -16,6 +16,11 @@
             Welcome {{ current_user.username }}
 
             |
+            <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('analysis.monthly_analysis') }}">Monthly Analysis</a>
+            <a href="/analysis/recurring-seasonal">Spending Patterns</a>
+
+            |
             <a href="/logout">Logout</a>
 
         </span>
@@ -62,7 +67,15 @@
         <div class="card">
 
             <h2>Upload Transactions</h2>
-
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             <form
                 action="/upload-csv"
                 method="POST"
@@ -179,5 +192,14 @@
             {% endif %}
         </div>
     </div>
+
+<script>
+    window.addEventListener("pageshow", function(event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    });
+</script>
+
 </body>
 </html>

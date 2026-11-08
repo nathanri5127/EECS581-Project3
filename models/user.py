@@ -20,3 +20,10 @@ class User(UserMixin, db.Model):
         db.String(255),
         nullable=False
     )
+
+    transactions = db.relationship(
+        "Transaction",
+        backref="user",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )

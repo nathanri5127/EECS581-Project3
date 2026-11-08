@@ -1,4 +1,5 @@
 from extensions import db
+from services.encryption import EncryptedDecimal, EncryptedString
 
 class Transaction(db.Model):
     __tablename__ = "transactions"
@@ -14,18 +15,25 @@ class Transaction(db.Model):
         nullable=False
     )
 
+    # Encryption for sensitive fields added on 11/7/2026
+    # Github Copilot using HydraFusion added this -- Aidan P.
+    # Encrypted columns for date, description, amount, category for data security
     date = db.Column(
-        db.String(50)
+        EncryptedString(),
+        nullable=False
     )
 
     description = db.Column(
-        db.String(255)
+        EncryptedString(),
+        nullable=False
     )
 
     amount = db.Column(
-        db.Float
+        EncryptedDecimal(),
+        nullable=False
     )
 
     category = db.Column(
-        db.String(100)
+        EncryptedString(),
+        nullable=True
     )
