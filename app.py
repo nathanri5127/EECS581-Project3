@@ -5,6 +5,7 @@ from routes.auth import auth_bp
 from routes.dashboard import dashboard_bp
 from routes.patterns import patterns_bp # added by Fabrizio Falcon
 from routes.upload import upload_bp
+from routes.analysis import analysis_bp
 
 app = Flask(__name__)
 
@@ -23,6 +24,8 @@ app.register_blueprint(dashboard_bp) # added by Fabrizio Falcon
 app.register_blueprint(patterns_bp)
 
 app.register_blueprint(upload_bp)
+
+app.register_blueprint(analysis_bp)
 
 from flask_login import LoginManager
 login_manager = LoginManager()
