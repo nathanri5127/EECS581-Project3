@@ -83,3 +83,10 @@ def auto_categorize(description, amount):
         return "Income"
 
     return "Uncategorized"
+
+# Every category a transaction can have. Used by the dashboard
+# dropdown and to validate manual category changes.
+CATEGORIES = (
+    [category for category, _ in CATEGORY_RULES]
+    + ["Income", "Uncategorized"]
+)

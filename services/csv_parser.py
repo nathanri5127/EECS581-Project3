@@ -1,5 +1,5 @@
 import pandas as pd
-from services.auto_categorizer import auto_categorize
+from services.categorizer import auto_categorize
 DATE_COLUMNS = [
     "date",
     "transaction date",
