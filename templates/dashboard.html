@@ -16,6 +16,8 @@
             Welcome {{ current_user.username }}
 
             |
+            <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('analysis.monthly_analysis') }}">Monthly Analysis</a>
             <a href="/logout">Logout</a>
 
         </span>

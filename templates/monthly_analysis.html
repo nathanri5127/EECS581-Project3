@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monthly Analysis - Runway Financial</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="navbar">
+        <strong>Runway Financial</strong>
+
+        <span style="float:right">
+
+            Welcome {{ current_user.username }}
+
+            |
+            <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('analysis.monthly_analysis') }}">Monthly Analysis</a>
+            <a href="/logout">Logout</a>
+
+        </span>
+
+    </div>
+
+    <div class="container">
+
+        <h1>Monthly Analysis</h1>
+
+        {% if months %}
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+
+                <h3>Average Monthly Income</h3>
+
+                <h2>
+                    ${{ "%.2f"|format(average_income) }}
+                </h2>
+
+            </div>
+
+            <div class="summary-card">
+
+                <h3>Average Monthly Expenses</h3>
+
+                <h2>
+                    -${{ "%.2f"|format(average_expenses) }}
+                </h2>
+
+            </div>
+
+            <div class="summary-card">
+
+                <h3>Months Over Budget</h3>
+
+                <h2>
+                    {{ deficit_count }} of {{ months|length }}
+                </h2>
+
+            </div>
+        </div>
+
+        <div class="card">
+
+            <h2>Income vs. Expenses by Month</h2>
+
+            {% if unparsed_count %}
+                <div class="flash-message">
+                    {{ unparsed_count }} transaction{{ "s" if unparsed_count != 1 }}
+                    had an unreadable date and {{ "were" if unparsed_count != 1 else "was" }}
+                    left out of this analysis.
+                </div>
+            {% endif %}
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Month</th>
+                        <th>Income</th>
+                        <th>Expenses</th>
+                        <th>Net</th>
+                        <th>Transactions</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for month in months %}
+
+                    <tr class="{{ 'deficit-row' if month.is_deficit }}">
+
+                        <td>{{ month.label }}</td>
+
+                        <td>
+                            <span style="color:green">
+                                ${{ "%.2f"|format(month.income) }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span style="color:red">
+                                -${{ "%.2f"|format(month.expenses) }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if month.net < 0 %}
+                                <span style="color:red">
+                                    -${{ "%.2f"|format(month.net|abs) }}
+                                </span>
+                            {% else %}
+                                <span style="color:green">
+                                    ${{ "%.2f"|format(month.net) }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ month.transaction_count }}</td>
+
+                        <td>
+                            {% if month.is_deficit %}
+                                <span class="deficit-flag">Expenses exceeded income</span>
+                            {% else %}
+                                OK
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="card">
+
+            <h2>6-Month Forecast</h2>
+
+            {% if forecast %}
+
+                <p>
+                    Based on {{ forecast.simulations }} simulated futures, each built by
+                    randomly picking income and expenses from your
+                    {{ forecast.history_months }} past months.
+                </p>
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Chance of a month with negative net</th>
+                            <th>Bad case (10th percentile)</th>
+                            <th>Typical (median)</th>
+                            <th>Good case (90th percentile)</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>{{ "%.0f"|format(forecast.negative_month_probability * 100) }}%</td>
+                            {% for total in [forecast.bad_case_total, forecast.typical_total, forecast.good_case_total] %}
+                            <td>
+                                {% if total < 0 %}
+                                    <span style="color:red">-${{ "%.2f"|format(total|abs) }}</span>
+                                {% else %}
+                                    <span style="color:green">${{ "%.2f"|format(total) }}</span>
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+
+                </table>
+
+                <p>
+                    Outcomes are total net (income minus expenses) over the next
+                    {{ forecast.months }} months.
+                </p>
+
+            {% else %}
+
+                <p>
+                    At least {{ min_history_months }} months of transactions are
+                    needed for a forecast.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+        {% else %}
+
+        <div class="card">
+            <p>
+                No transactions to analyze yet.
+                <a href="{{ url_for('dashboard.dashboard') }}">Upload a CSV</a>
+                on the dashboard to get started.
+            </p>
+        </div>
+
+        {% endif %}
+
+    </div>
+</body>
+</html>

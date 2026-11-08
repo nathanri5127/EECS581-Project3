@@ -4,6 +4,7 @@ from extensions import db
 from routes.auth import auth_bp
 from routes.dashboard import dashboard_bp
 from routes.upload import upload_bp
+from routes.analysis import analysis_bp
 
 app = Flask(__name__)
 
@@ -20,6 +21,8 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 
 app.register_blueprint(upload_bp)
+
+app.register_blueprint(analysis_bp)
 
 from flask_login import LoginManager
 login_manager = LoginManager()
