@@ -1,3 +1,19 @@
+"""
+Description:
+Provides account management functionality including
+registration, login, logout, and password reset.
+
+Responsibilities:
+- User registration
+- User authentication
+- Session management
+- Password reset
+
+Dependencies:
+- Flask
+- Flask-Login
+- Werkzeug Security
+"""
 from flask import (
     Blueprint,
     render_template,
@@ -27,7 +43,7 @@ auth_bp = Blueprint(
     __name__
 )
 
-
+#main function for user registration
 @auth_bp.route(
     "/register",
     methods=["GET", "POST"]
@@ -64,6 +80,7 @@ def register():
         return redirect(url_for("dashboard.dashboard"))
     return render_template("register.html")
 
+#main function for user login
 @auth_bp.route(
     "/login",
     methods=["GET", "POST"]
@@ -91,12 +108,14 @@ def login():
         )
     return render_template("login.html")
 
+#main function for user logout
 @auth_bp.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for("auth.login"))
 
+#main function for resetting user password
 @auth_bp.route(
     "/reset-password",
     methods=["GET", "POST"]

@@ -1,3 +1,14 @@
+"""
+Description:
+Provides automatic transaction categorization based
+on transaction descriptions and spending patterns.
+
+Responsibilities:
+- Categorize transactions
+- Identify spending categories
+- Apply default categories
+"""
+
 import re
 
 # Ordered: the first category whose keyword matches wins.

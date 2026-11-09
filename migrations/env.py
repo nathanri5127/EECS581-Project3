@@ -1,3 +1,22 @@
+"""
+Description: 
+Alembic migration environment for Flask applications.
+This file is used by Alembic to run migrations in both "offline" and "online" modes. 
+It sets up the database connection and configures the migration context.
+
+Responsibilities:
+- Configure logging for Alembic.
+- Retrieve the database engine from the Flask application context.
+- Set the SQLAlchemy URL for Alembic based on the Flask application's database configuration.
+- Provide functions to run migrations in offline and online modes.
+- In offline mode, it configures the context with just a URL and emits SQL statements to the script output.
+- In online mode, it creates an Engine, associates a connection with the context, and runs migrations.
+
+Dependencies:
+- Flask
+- Alembic
+"""
+
 import logging
 from logging.config import fileConfig
 

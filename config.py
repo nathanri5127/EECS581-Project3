@@ -1,3 +1,18 @@
+"""
+Description:
+Stores application configuration settings and loads
+environment variables required by the application.
+
+Responsibilities:
+- Load database connection string
+- Load secret key
+- Configure Flask settings
+
+Dependencies:
+- python-dotenv
+- os
+"""
+
 import os
 from dotenv import load_dotenv
 

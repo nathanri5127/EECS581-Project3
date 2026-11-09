@@ -1,3 +1,23 @@
+"""
+Description:
+Application entry point. Creates and configures the Flask
+application, initializes database functionality, registers
+blueprints, and configures user authentication.
+
+Responsibilities:
+- Create Flask application instance
+- Initialize SQLAlchemy and Flask-Migrate
+- Configure Flask-Login
+- Register application blueprints
+- Start the web server
+
+Dependencies:
+- Flask
+- Flask-Migrate
+- Flask-Login
+- SQLAlchemy
+"""
+
 from flask import Flask
 from flask_migrate import Migrate
 from extensions import db
@@ -36,10 +56,12 @@ login_manager.login_view = ("auth.login")
 
 from models.user import User
 
+#loads user from database for flask-login
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+#disables users being able to access dashboard after logging out, by preventing caching of pages
 @app.after_request
 def add_header(response):
     response.headers["Cache-Control"] = (

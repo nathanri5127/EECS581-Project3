@@ -1,3 +1,17 @@
+"""
+Description:
+Defines the Transaction database model used to store
+financial transaction records uploaded by users.
+
+Responsibilities:
+- Store transaction information
+- Associate transactions with users
+- Store categories and financial data
+
+Dependencies:
+- SQLAlchemy
+"""
+
 from extensions import db
 from services.encryption import EncryptedDecimal, EncryptedString
 

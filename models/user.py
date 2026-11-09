@@ -1,3 +1,18 @@
+"""
+Description:
+Defines the User database model used for account
+registration, authentication, and session management.
+
+Responsibilities:
+- Store account information
+- Store password hashes
+- Support Flask-Login user sessions
+
+Dependencies:
+- SQLAlchemy
+- Flask-Login
+"""
+
 from extensions import db
 from flask_login import UserMixin
 

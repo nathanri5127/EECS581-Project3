@@ -1,3 +1,21 @@
+"""
+Description:
+Provides dashboard functionality and financial summary
+calculations.
+
+Responsibilities:
+- Generate dashboard page
+- Display user transactions
+- Calculate income totals
+- Calculate expense totals
+- Calculate net balance
+
+Dependencies:
+- Flask
+- SQLAlchemy
+- Flask-Login
+"""
+
 from flask import (Blueprint, abort, redirect, render_template, request, url_for)
 from flask_login import current_user, login_required
 
@@ -9,7 +27,7 @@ dashboard_bp = Blueprint(
     "dashboard",
     __name__
 )
-
+#gives a summary of the transactions for the user
 def calculate_summary(transactions):
     income = sum(
         t.amount

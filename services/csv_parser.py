@@ -1,3 +1,20 @@
+"""
+Description:
+Parses and validates uploaded bank CSV files.
+Converts varying CSV formats into a standardized
+transaction structure.
+
+Responsibilities:
+- Detect supported columns
+- Validate CSV structure
+- Parse transaction records
+- Normalize transaction data
+- Categorize transactions
+
+Dependencies:
+- Pandas
+"""
+
 import pandas as pd
 from services.categorizer import auto_categorize
 DATE_COLUMNS = [

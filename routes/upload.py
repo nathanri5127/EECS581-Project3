@@ -1,3 +1,20 @@
+"""
+Description:
+Handles transaction file uploads and transaction
+storage operations.
+
+Responsibilities:
+- Process uploaded CSV files
+- Validate transaction uploads
+- Create transaction records
+- Store transaction data
+
+Dependencies:
+- Flask
+- SQLAlchemy
+- Pandas
+"""
+
 from flask import (
     Blueprint,
     request,
@@ -22,6 +39,8 @@ upload_bp = Blueprint(
     "/upload-csv",
     methods=["POST"]
 )
+#handler function for uploading CSV files containing transaction data. 
+#it processes the uploaded file, validates the transactions, and stores them in the database.
 @login_required
 def upload_csv():
     file = request.files["csv_file"]

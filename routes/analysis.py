@@ -1,3 +1,14 @@
+"""
+Description: 
+This file contains the routes for the analysis pages of the application.
+
+Responsibilities:
+- Provide a route for monthly analysis of user transactions
+
+Dependencies:
+- Flask
+"""
+
 from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 
