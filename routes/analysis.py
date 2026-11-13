@@ -16,6 +16,8 @@ from models.transaction import Transaction
 from services.monte_carlo import MIN_HISTORY_MONTHS, forecast_months
 from services.monthly_analysis import analyze_monthly
 
+from services.income_stability import income_stability
+
 analysis_bp = Blueprint(
     "analysis",
     __name__
@@ -39,9 +41,13 @@ def monthly_analysis():
     forecast = forecast_months(
         analysis["months"]
     )
+    stability = income_stability(
+        analysis["months"]
+    )
     return render_template(
         "monthly_analysis.html",
         forecast=forecast,
+        stability=stability,
         min_history_months=MIN_HISTORY_MONTHS,
         **analysis
     )
