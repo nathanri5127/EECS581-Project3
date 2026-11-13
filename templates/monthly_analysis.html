@@ -198,6 +198,49 @@
 
         </div>
 
+                <div class="card">
+
+            <h2>Income Stability Score</h2>
+
+            {% if stability %}
+
+                <div class="summary-grid">
+
+                    <div class="summary-card">
+                        <h3>Score</h3>
+                        <h2>{{ stability.score }} / 100</h2>
+                    </div>
+
+                    <div class="summary-card">
+                        <h3>Rating</h3>
+                        <h2>{{ stability.label }}</h2>
+                    </div>
+
+                    <div class="summary-card">
+                        <h3>Months With No Income</h3>
+                        <h2>{{ stability.months_without_income }} of {{ stability.months_used }}</h2>
+                    </div>
+
+                </div>
+
+                <p>
+                    Measures how much your monthly income changes from month to
+                    month. 100 means every month paid the same; lower scores mean
+                    bigger swings. 80 and above is Stable, 50&ndash;79 is Moderate,
+                    and below 50 is Volatile.
+                </p>
+
+            {% else %}
+
+                <p>
+                    At least {{ min_history_months }} months of transactions are
+                    needed for an income stability score.
+                </p>
+
+            {% endif %}
+
+        </div>
+        
         {% else %}
 
         <div class="card">
