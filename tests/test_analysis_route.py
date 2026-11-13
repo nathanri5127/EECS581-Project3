@@ -138,3 +138,30 @@ def test_dashboard_links_to_monthly_analysis(client, make_user, login):
     login(make_user("alice"))
     html = client.get("/dashboard").get_data(as_text=True)
     assert 'href="/analysis/monthly"' in html
+
+def test_shows_income_stability_score(client, make_user, login):
+    # Three identical paychecks: the score should be a perfect 100.
+    alice = make_user("alice")
+    add_transactions(alice, [
+        ("2026-08-01", "Paycheck", 2000),
+        ("2026-09-01", "Paycheck", 2000),
+        ("2026-10-01", "Paycheck", 2000),
+    ])
+    login(alice)
+
+    html = client.get("/analysis/monthly").get_data(as_text=True)
+
+    assert "Income Stability Score" in html
+    assert "100 / 100" in html
+    assert "Stable" in html
+
+
+def test_stability_needs_enough_history(client, make_user, login):
+    # One month is below MIN_HISTORY_MONTHS, so no score is shown.
+    alice = make_user("alice")
+    add_transactions(alice, [("2026-10-01", "Paycheck", 2000)])
+    login(alice)
+
+    html = client.get("/analysis/monthly").get_data(as_text=True)
+
+    assert "needed for an income stability score" in html
