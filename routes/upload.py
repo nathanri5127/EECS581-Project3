@@ -47,7 +47,7 @@ def upload_csv():
     if not file:
         return "No file provided"
     try:
-        transactions = parse_transactions(file)
+        transactions, skipped_rows = parse_transactions(file)
     except Exception as e:
         flash(str(e), "error")
         return redirect(url_for("dashboard.dashboard"))
@@ -71,6 +71,9 @@ def upload_csv():
             new_transaction
         )
     db.session.commit()
+    if skipped_rows > 0:
+        flash(f"Skipped {skipped_rows} rows with invalid dates.", "warning")
+    flash(f"Successfully uploaded {len(transactions)} transactions.", "success")
     return redirect(
         url_for("dashboard.dashboard")
     )
