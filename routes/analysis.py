@@ -13,6 +13,7 @@ from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 
 from models.transaction import Transaction
+from services.forecast_chart import forecast_charts
 from services.monte_carlo import MIN_HISTORY_MONTHS, forecast_months
 from services.monthly_analysis import analyze_monthly
 
@@ -44,9 +45,14 @@ def monthly_analysis():
     stability = income_stability(
         analysis["months"]
     )
+    charts = forecast_charts(
+        analysis["months"],
+        forecast
+    )
     return render_template(
         "monthly_analysis.html",
         forecast=forecast,
+        charts=charts,
         stability=stability,
         min_history_months=MIN_HISTORY_MONTHS,
         **analysis

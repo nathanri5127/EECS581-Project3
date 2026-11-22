@@ -226,6 +226,94 @@
                     The range widens further out because each month adds more
                     uncertainty.
                 </p>
+                {% if charts %}
+                {% set c = charts.cumulative %}
+                <div class="forecast-chart">
+
+                    <h3>Projected Running Total</h3>
+
+                    <svg viewBox="0 0 {{ c.width }} {{ c.height }}" role="img"
+                         aria-label="Projected running total of net cash over the next {{ forecast.months }} months">
+
+                        {% for tick in c.ticks %}
+                            <line class="chart-grid" x1="{{ c.plot_left }}" x2="{{ c.plot_right }}" y1="{{ tick.y }}" y2="{{ tick.y }}"></line>
+                            <text class="chart-axis-label" x="{{ c.plot_left - 8 }}" y="{{ tick.y }}" text-anchor="end" dominant-baseline="middle">{{ tick.label }}</text>
+                        {% endfor %}
+
+                        <line class="chart-zero" x1="{{ c.plot_left }}" x2="{{ c.plot_right }}" y1="{{ c.zero_y }}" y2="{{ c.zero_y }}"></line>
+
+                        <path class="chart-band" d="{{ c.band_path }}"></path>
+                        <path class="chart-median" d="{{ c.median_path }}"></path>
+
+                        {% for point in c.points %}
+                            <circle class="chart-point" cx="{{ point.x }}" cy="{{ point.y }}" r="5">
+                                <title>{{ point.tooltip }}</title>
+                            </circle>
+                        {% endfor %}
+
+                        {% for x_label in c.x_labels %}
+                            <text class="chart-axis-label" x="{{ x_label.x }}" y="{{ c.plot_bottom + 22 }}" text-anchor="middle">{{ x_label.label }}</text>
+                        {% endfor %}
+
+                    </svg>
+
+                    <div class="chart-legend">
+                        <span><i class="legend-swatch legend-median"></i>Typical (median)</span>
+                        <span><i class="legend-swatch legend-band"></i>Bad case to good case (10th&ndash;90th percentile)</span>
+                    </div>
+
+                </div>
+
+                {% set m = charts.monthly %}
+                <div class="forecast-chart">
+
+                    <h3>Monthly Net: Recent vs. Forecast</h3>
+
+                    <svg viewBox="0 0 {{ m.width }} {{ m.height }}" role="img"
+                         aria-label="Actual net for recent months followed by the forecast range for each future month">
+
+                        {% for tick in m.ticks %}
+                            <line class="chart-grid" x1="{{ m.plot_left }}" x2="{{ m.plot_right }}" y1="{{ tick.y }}" y2="{{ tick.y }}"></line>
+                            <text class="chart-axis-label" x="{{ m.plot_left - 8 }}" y="{{ tick.y }}" text-anchor="end" dominant-baseline="middle">{{ tick.label }}</text>
+                        {% endfor %}
+
+                        {% for bar in m.bars %}
+                            <rect class="{{ 'chart-bar-negative' if bar.negative else 'chart-bar-positive' }}"
+                                  x="{{ bar.x }}" y="{{ bar.y }}" width="{{ bar.width }}" height="{{ bar.height }}" rx="2">
+                                <title>{{ bar.tooltip }}</title>
+                            </rect>
+                            <text class="chart-axis-label" x="{{ bar.center }}" y="{{ m.plot_bottom + 22 }}" text-anchor="middle">{{ bar.label }}</text>
+                            <text class="chart-axis-label" x="{{ bar.center }}" y="{{ m.plot_bottom + 38 }}" text-anchor="middle">{{ bar.year }}</text>
+                        {% endfor %}
+
+                        {% for range in m.ranges %}
+                            <g>
+                                <title>{{ range.tooltip }}</title>
+                                <rect class="chart-range" x="{{ range.x }}" y="{{ range.y }}" width="{{ range.width }}" height="{{ range.height }}" rx="2"></rect>
+                                <line class="chart-median" x1="{{ range.x }}" x2="{{ range.x + range.width }}" y1="{{ range.typical_y }}" y2="{{ range.typical_y }}"></line>
+                            </g>
+                            <text class="chart-axis-label" x="{{ range.center }}" y="{{ m.plot_bottom + 22 }}" text-anchor="middle">{{ range.label }}</text>
+                            <text class="chart-axis-label" x="{{ range.center }}" y="{{ m.plot_bottom + 38 }}" text-anchor="middle">{{ range.year }}</text>
+                        {% endfor %}
+
+                        <line class="chart-zero" x1="{{ m.plot_left }}" x2="{{ m.plot_right }}" y1="{{ m.zero_y }}" y2="{{ m.zero_y }}"></line>
+
+                        {% if m.divider_x %}
+                            <line class="chart-divider" x1="{{ m.divider_x }}" x2="{{ m.divider_x }}" y1="{{ m.plot_top }}" y2="{{ m.plot_bottom }}"></line>
+                            <text class="chart-axis-label" x="{{ m.divider_x + 6 }}" y="{{ m.plot_top + 4 }}" dominant-baseline="hanging">Forecast &rarr;</text>
+                        {% endif %}
+
+                    </svg>
+
+                    <div class="chart-legend">
+                        <span><i class="legend-swatch legend-positive"></i>Actual surplus</span>
+                        <span><i class="legend-swatch legend-negative"></i>Actual deficit</span>
+                        <span><i class="legend-swatch legend-band"></i>Forecast range (10th&ndash;90th percentile)</span>
+                        <span><i class="legend-swatch legend-median"></i>Forecast typical</span>
+                    </div>
+
+                </div>
+                {% endif %}
 
             {% else %}
 
