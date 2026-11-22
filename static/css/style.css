@@ -108,3 +108,94 @@ td {
     color: #991b1b;
     font-weight: bold;
 }
+
+/* Forecast visualization charts (monthly analysis page) */
+.forecast-chart {
+    margin-top: 25px;
+}
+
+.forecast-chart h3 {
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.forecast-chart svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.chart-grid {
+    stroke: #e5e7eb;
+    stroke-width: 1;
+}
+
+.chart-zero {
+    stroke: #6b7280;
+    stroke-width: 1.5;
+}
+
+.chart-divider {
+    stroke: #9ca3af;
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+}
+
+.chart-axis-label {
+    fill: #4b5563;
+    font-size: 12px;
+}
+
+.chart-band,
+.chart-range {
+    fill: #2563eb;
+    fill-opacity: 0.18;
+}
+
+.chart-range {
+    stroke: #2563eb;
+    stroke-opacity: 0.4;
+}
+
+.chart-median {
+    fill: none;
+    stroke: #1d4ed8;
+    stroke-width: 2.5;
+}
+
+.chart-point {
+    fill: #1d4ed8;
+    stroke: white;
+    stroke-width: 2;
+}
+
+.chart-bar-positive {
+    fill: #16a34a;
+}
+
+.chart-bar-negative {
+    fill: #dc2626;
+}
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 13px;
+    color: #4b5563;
+    margin-top: 6px;
+}
+
+.legend-swatch {
+    display: inline-block;
+    width: 14px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.legend-median { background: #1d4ed8; height: 3px; }
+.legend-band { background: rgba(37, 99, 235, 0.18); border: 1px solid rgba(37, 99, 235, 0.4); }
+.legend-positive { background: #16a34a; }
+.legend-negative { background: #dc2626; }

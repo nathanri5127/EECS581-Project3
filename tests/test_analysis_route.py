@@ -134,6 +134,41 @@ def test_forecast_shown_with_enough_history(client, make_user, login):
     assert html.count("$6000.00") == 3
 
 
+def test_forecast_charts_shown_with_enough_history(client, make_user, login):
+    alice = make_user("alice")
+    add_transactions(alice, [
+        ("2026-08-01", "Paycheck", 3000),
+        ("2026-08-02", "Rent", -2000),
+        ("2026-09-01", "Paycheck", 3000),
+        ("2026-09-02", "Rent", -3500),
+        ("2026-10-01", "Paycheck", 3000),
+        ("2026-10-02", "Rent", -2000),
+    ])
+    login(alice)
+
+    html = client.get("/analysis/monthly").get_data(as_text=True)
+
+    assert "Projected Running Total" in html
+    assert "Monthly Net: Recent vs. Forecast" in html
+    assert html.count("<svg") == 2
+    # Forecast months continue from the last month of history.
+    assert "Nov 2026" in html and "Apr 2027" in html  # running-total axis
+    # September's actual deficit is drawn as a red bar with a tooltip.
+    assert "chart-bar-negative" in html
+    assert "September 2026 (actual): -$500.00" in html
+
+
+def test_forecast_charts_hidden_without_enough_history(client, make_user, login):
+    alice = make_user("alice")
+    add_transactions(alice, [("2026-10-01", "Paycheck", 1000)])
+    login(alice)
+
+    html = client.get("/analysis/monthly").get_data(as_text=True)
+
+    assert "Projected Running Total" not in html
+    assert "<svg" not in html
+
+
 def test_dashboard_links_to_monthly_analysis(client, make_user, login):
     login(make_user("alice"))
     html = client.get("/dashboard").get_data(as_text=True)

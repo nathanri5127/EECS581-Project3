@@ -17,10 +17,28 @@ Plain-English summary:
      report typical (median), bad-case (10th percentile), and good-case
      (90th percentile) totals for the whole period.
 """
+import calendar
+
 import numpy as np
 
 # Resampling one or two months just replays them, which isn't a forecast.
 MIN_HISTORY_MONTHS = 3
+
+
+def _future_labels(history, months):
+    """Name the months after the last month of history, e.g. "January 2027"."""
+    last = history[-1]
+    if "year" not in last or "month" not in last:
+        return [f"Month {i + 1}" for i in range(months)]
+
+    labels = []
+    year, month = last["year"], last["month"]
+    for _ in range(months):
+        month += 1
+        if month > 12:
+            month, year = 1, year + 1
+        labels.append(f"{calendar.month_name[month]} {year}")
+    return labels
 
 
 def forecast_months(history, months=6, n=10_000, seed=7):
@@ -43,6 +61,14 @@ def forecast_months(history, months=6, n=10_000, seed=7):
         typical_total:            median total net over the period
         bad_case_total:           10th percentile total net
         good_case_total:          90th percentile total net
+        bands:                    one dict per future month, for charts:
+            label:            e.g. "December 2026" (or "Month 1" if the
+                              history has no year/month)
+            net_low/net_typical/net_high:
+                              10th/50th/90th percentile of that month's net
+            cumulative_low/cumulative_typical/cumulative_high:
+                              10th/50th/90th percentile of total net from
+                              now through the end of that month
     """
     if months < 1 or n < 1:
         raise ValueError("months and n must be positive.")
@@ -63,7 +89,25 @@ def forecast_months(history, months=6, n=10_000, seed=7):
     any_negative = (monthly_net < 0).any(axis=1)
     total_net = monthly_net.sum(axis=1)
 
+    # Percentiles per future month (columns), used by the forecast charts.
+    net_pct = np.percentile(monthly_net, [10, 50, 90], axis=0)
+    cumulative_pct = np.percentile(monthly_net.cumsum(axis=1), [10, 50, 90], axis=0)
+    labels = _future_labels(history, months)
+    bands = [
+        {
+            "label": labels[i],
+            "net_low": round(float(net_pct[0, i]), 2),
+            "net_typical": round(float(net_pct[1, i]), 2),
+            "net_high": round(float(net_pct[2, i]), 2),
+            "cumulative_low": round(float(cumulative_pct[0, i]), 2),
+            "cumulative_typical": round(float(cumulative_pct[1, i]), 2),
+            "cumulative_high": round(float(cumulative_pct[2, i]), 2),
+        }
+        for i in range(months)
+    ]
+
     return {
+        "bands": bands,
         "months": months,
         "simulations": n,
         "history_months": len(history),
