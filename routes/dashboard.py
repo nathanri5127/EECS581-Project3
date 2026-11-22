@@ -16,7 +16,7 @@ Dependencies:
 - Flask-Login
 """
 
-from flask import (Blueprint, abort, redirect, render_template, request, url_for)
+from flask import (Blueprint, abort, redirect, render_template, request, url_for, flash)
 from flask_login import current_user, login_required
 
 from extensions import db
@@ -52,6 +52,18 @@ def calculate_summary(transactions):
 @dashboard_bp.route("/dashboard")
 @login_required
 def dashboard():
+    try:
+        transactions = (
+            Transaction.query
+            .filter_by(
+                user_id=current_user.id
+            )
+            .order_by(Transaction.id)
+            .all()
+        )
+    except RuntimeError as e:
+        flash(str(e), "error")
+        return redirect(url_for("auth.login"))
     transactions = (
         Transaction.query
         .filter_by(
@@ -78,14 +90,18 @@ def dashboard():
 def update_category(transaction_id):
     # Only find the transaction if it belongs to the logged-in user,
     # so users cannot edit each other's transactions.
-    transaction = (
-        Transaction.query
-        .filter_by(
-            id=transaction_id,
-            user_id=current_user.id
+    try:
+        transaction = (
+            Transaction.query
+            .filter_by(
+                id=transaction_id,
+                user_id=current_user.id
+            )
+            .first_or_404()
         )
-        .first_or_404()
-    )
+    except RuntimeError as e:
+        flash(str(e), "error")
+        return redirect(url_for("auth.login"))
 
     new_category = request.form.get(
         "category",
