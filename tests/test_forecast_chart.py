@@ -1,3 +1,6 @@
+## Test that the forecast charts are hidden if there is not enough history.
+# Co-Authored by Claude code using Opus5.5 on 11/21/26, verified by Aidan
+## More tests for the forecast charts are in test_forecast_chart.py, which tests the chart generation functions directly.
 import calendar
 from decimal import Decimal
 
@@ -18,7 +21,7 @@ from services.forecast_chart import (
 )
 from services.monte_carlo import forecast_months
 
-
+## Test that the forecast charts are hidden if there is not enough history.
 def month(year, month_number, income, expenses):
     income, expenses = Decimal(str(income)), Decimal(str(expenses))
     return {
@@ -41,19 +44,19 @@ def varied_history():
 
 
 # --- forecast bands from the Monte Carlo service ---------------------------
-
+# The following tests check that the forecast_months() function produces the expected bands and totals for various histories. They also check that the labels for the forecast months are generated correctly based on the last month of history.
 def test_bands_labelled_after_last_history_month():
     history = [month(2026, 10, 100, 50), month(2026, 11, 100, 50), month(2026, 12, 100, 50)]
     bands = forecast_months(history, months=3)["bands"]
     assert [b["label"] for b in bands] == ["January 2027", "February 2027", "March 2027"]
 
-
+# If the last month of history is not available, fall back to generic labels.
 def test_bands_fall_back_to_generic_labels():
     history = [{"income": 100, "expenses": 50}] * 3
     bands = forecast_months(history, months=2)["bands"]
     assert [b["label"] for b in bands] == ["Month 1", "Month 2"]
 
-
+# The following tests check that the forecast_months() function produces the expected bands and totals for various histories. They also check that the labels for the forecast months are generated correctly based on the last month of history.
 def test_bands_for_certain_history():
     history = [month(2026, m, 3000, 2000) for m in (8, 9, 10)]
     bands = forecast_months(history)["bands"]
@@ -62,7 +65,7 @@ def test_bands_for_certain_history():
         assert b["net_low"] == b["net_typical"] == b["net_high"] == 1000
         assert b["cumulative_low"] == b["cumulative_typical"] == b["cumulative_high"] == 1000 * i
 
-
+# The following tests check that the forecast_months() function produces the expected bands and totals for various histories. They also check that the labels for the forecast months are generated correctly based on the last month of history.
 def test_bands_ordered_and_last_cumulative_matches_totals():
     result = forecast_months(varied_history())
     for b in result["bands"]:
@@ -75,7 +78,7 @@ def test_bands_ordered_and_last_cumulative_matches_totals():
 
 
 # --- helpers ----------------------------------------------------------------
-
+# The following tests check that the helper functions for generating chart geometry and labels work as expected. They verify that the chart points, ranges, and labels are positioned correctly based on the forecast data.
 @pytest.mark.parametrize("low, high", [(0, 6000), (-3000, 0), (-650, 4200), (5, 5), (0, 0)])
 def test_nice_ticks_cover_range_and_are_even(low, high):
     ticks = nice_ticks(low, high)
@@ -84,7 +87,7 @@ def test_nice_ticks_cover_range_and_are_even(low, high):
     steps = {round(b - a, 6) for a, b in zip(ticks, ticks[1:])}
     assert len(steps) == 1
 
-
+# The following tests check that the helper functions for generating chart geometry and labels work as expected. They verify that the chart points, ranges, and labels are positioned correctly based on the forecast data.
 def test_money_labels():
     assert money_label(0) == "$0"
     assert money_label(1500) == "$1.5k"
@@ -95,7 +98,7 @@ def test_money_labels():
 
 
 # --- chart geometry ---------------------------------------------------------
-
+# The following tests check that the chart geometry functions produce the expected SVG coordinates and paths for the cumulative and monthly charts. They verify that the points, ranges, and bands are positioned correctly based on the forecast data.
 def test_cumulative_chart_geometry():
     forecast = forecast_months(varied_history())
     chart = cumulative_chart(forecast)
@@ -113,7 +116,7 @@ def test_cumulative_chart_geometry():
     assert chart["band_path"].startswith("M") and chart["band_path"].endswith("Z")
     assert "typical" in chart["points"][0]["tooltip"]
 
-
+# The following tests check that the chart geometry functions produce the expected SVG coordinates and paths for the cumulative and monthly charts. They verify that the points, ranges, and bands are positioned correctly based on the forecast data.
 def test_cumulative_chart_higher_values_drawn_higher():
     history = [month(2026, m, 3000, 2000) for m in (8, 9, 10)]
     chart = cumulative_chart(forecast_months(history))
@@ -122,7 +125,7 @@ def test_cumulative_chart_higher_values_drawn_higher():
     assert ys == sorted(ys, reverse=True)
     assert all(y < chart["zero_y"] for y in ys)
 
-
+# The following tests check that the chart geometry functions produce the expected SVG coordinates and paths for the cumulative and monthly charts. They verify that the points, ranges, and bands are positioned correctly based on the forecast data.
 def test_monthly_chart_bars_and_ranges():
     history = varied_history()
     chart = monthly_chart(history, forecast_months(history))
@@ -141,20 +144,20 @@ def test_monthly_chart_bars_and_ranges():
     # Divider sits between the last bar and the first forecast range.
     assert chart["bars"][-1]["center"] < chart["divider_x"] < chart["ranges"][0]["center"]
 
-
+# Test that the monthly chart limits the number of history months shown.
 def test_monthly_chart_limits_history_shown():
     history = [month(2026 + (m - 1) // 12, (m - 1) % 12 + 1, 3000, 2000) for m in range(1, 13)]
     chart = monthly_chart(history, forecast_months(history))
     assert len(chart["bars"]) == HISTORY_MONTHS_SHOWN
     assert (chart["bars"][-1]["label"], chart["bars"][-1]["year"]) == ("Dec", "2026")
 
-
+# Test that the forecast charts are hidden if there is not enough history.
 def test_forecast_charts_none_without_forecast():
     assert forecast_charts([], None) is None
     charts = forecast_charts(varied_history(), forecast_months(varied_history()))
     assert set(charts) == {"cumulative", "monthly"}
 
-
+# Test that the monthly chart uses short month names for the history bars, and full month names for the forecast ranges.
 def test_short_month_names_split_too():
     history = [month(2027, m, 3000, 2000) for m in (3, 4, 5)]
     chart = monthly_chart(history, forecast_months(history))

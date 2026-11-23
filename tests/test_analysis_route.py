@@ -133,8 +133,11 @@ def test_forecast_shown_with_enough_history(client, make_user, login):
     assert "0%" in html
     assert html.count("$6000.00") == 3
 
-
+## The following tests are for the forecast charts, which are rendered as SVG.
+# They check for the presence of the chart elements and some of the text labels, but don't verify the exact SVG paths or coordinates.
+# Co-Authored by Claude code using Opus5.5 on 11/21/26, verified by Aidan
 def test_forecast_charts_shown_with_enough_history(client, make_user, login):
+    # The forecast charts are only shown if there is enough history to generate a forecast.
     alice = make_user("alice")
     add_transactions(alice, [
         ("2026-08-01", "Paycheck", 3000),
@@ -145,7 +148,7 @@ def test_forecast_charts_shown_with_enough_history(client, make_user, login):
         ("2026-10-02", "Rent", -2000),
     ])
     login(alice)
-
+    # The forecast charts show the projected running total and the monthly net cash flow, with bands for the 10th-90th percentile range and a median line.
     html = client.get("/analysis/monthly").get_data(as_text=True)
 
     assert "Projected Running Total" in html
@@ -157,7 +160,7 @@ def test_forecast_charts_shown_with_enough_history(client, make_user, login):
     assert "chart-bar-negative" in html
     assert "September 2026 (actual): -$500.00" in html
 
-
+# Test that the forecast charts are hidden if there is not enough history.
 def test_forecast_charts_hidden_without_enough_history(client, make_user, login):
     alice = make_user("alice")
     add_transactions(alice, [("2026-10-01", "Paycheck", 1000)])

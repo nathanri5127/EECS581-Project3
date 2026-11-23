@@ -24,15 +24,20 @@ import numpy as np
 # Resampling one or two months just replays them, which isn't a forecast.
 MIN_HISTORY_MONTHS = 3
 
-
+## The main function is forecast_months, which returns a dict with the
+## forecast data. The other function is a helper for naming the months
+# Co-Authored by Claude code using Opus5.5 on 11/21/26, verified by Aidan
 def _future_labels(history, months):
     """Name the months after the last month of history, e.g. "January 2027"."""
     last = history[-1]
+    # If the history has no year/month, just return "Month 1", "Month 2", etc.
     if "year" not in last or "month" not in last:
         return [f"Month {i + 1}" for i in range(months)]
 
     labels = []
     year, month = last["year"], last["month"]
+    # The last month of history is already in the analysis, so start with the
+    # next month.
     for _ in range(months):
         month += 1
         if month > 12:
@@ -90,9 +95,13 @@ def forecast_months(history, months=6, n=10_000, seed=7):
     total_net = monthly_net.sum(axis=1)
 
     # Percentiles per future month (columns), used by the forecast charts.
+    # The cumulative percentiles are for the total net from now through
+    # the end of that month, which is what the charts show.
+    # Co-Authored by Claude code using Opus5.5 on 11/21/26, verified by Aidan
     net_pct = np.percentile(monthly_net, [10, 50, 90], axis=0)
     cumulative_pct = np.percentile(monthly_net.cumsum(axis=1), [10, 50, 90], axis=0)
     labels = _future_labels(history, months)
+    # Build a list of dicts for the forecast charts, one dict per future month.
     bands = [
         {
             "label": labels[i],
@@ -103,7 +112,7 @@ def forecast_months(history, months=6, n=10_000, seed=7):
             "cumulative_typical": round(float(cumulative_pct[1, i]), 2),
             "cumulative_high": round(float(cumulative_pct[2, i]), 2),
         }
-        for i in range(months)
+        for i in range(months) 
     ]
 
     return {

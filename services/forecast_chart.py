@@ -15,6 +15,8 @@ Two charts are built:
   2. Monthly net chart: the actual net of recent past months as bars,
      followed by each future month's likely range (10th to 90th
      percentile) with a marker at the typical value.
+     
+Co-Authored by Claude code using Opus5.5 on 11/21/26, verified by Aidan
 """
 import math
 
@@ -33,7 +35,7 @@ PLOT_BOTTOM = HEIGHT - PAD_BOTTOM
 # How many past months to show next to the forecast in the monthly chart.
 HISTORY_MONTHS_SHOWN = 6
 
-
+# The minimum number of months of history required to generate a forecast.
 def nice_ticks(low, high, target=5):
     """
     Return evenly spaced, round tick values covering [low, high].
@@ -46,28 +48,29 @@ def nice_ticks(low, high, target=5):
     if low == high:
         pad = abs(low) * 0.1 or 1
         low, high = low - pad, high + pad
-
+    # The step size is a round number (1, 2, 2.5, 5, or 10 times a power of ten)
     raw_step = (high - low) / max(target - 1, 1)
     magnitude = 10 ** math.floor(math.log10(raw_step))
     for multiple in (1, 2, 2.5, 5, 10):
         step = multiple * magnitude
         if step >= raw_step:
             break
-
+    # Round the axis limits to multiples of the step size, so the ticks are round numbers.
     start = math.floor(low / step) * step
     end = math.ceil(high / step) * step
     count = int(round((end - start) / step))
     # round() avoids float noise like 0.30000000000000004 in labels.
     return [round(start + i * step, 10) for i in range(count + 1)]
 
-
+# The following functions are for formatting money values and generating chart geometry and labels. They are used by the cumulative_chart and monthly_chart functions to create the SVG elements for the forecast charts.
 def money_label(value):
     """Short axis label: 1500 -> "$1.5k", -200 -> "-$200", 0 -> "$0"."""
     sign = "-" if value < 0 else ""
     value = abs(value)
     if value >= 1000:
         return f"{sign}${round(value / 1000, 1):g}k"
-    return f"{sign}${round(value, 2):g}"
+    # For values less than $1000, show the full amount without rounding to avoid losing precision for small amounts.
+    return f"{sign}${round(value, 2):g}" 
 
 
 def money(value):
@@ -113,7 +116,7 @@ def _short_label(label):
     """ "December 2026" -> "Dec 2026"; other labels pass through."""
     return " ".join(p for p in _split_label(label) if p)
 
-
+# The following functions generate the SVG elements for the cumulative and monthly forecast charts. They use the Monte Carlo forecast data and the monthly history to create the chart geometry, including axes, ticks, labels, bars, ranges, and paths for the fan chart and bar chart.
 def cumulative_chart(forecast):
     """
     Fan chart of running total net, starting at $0 "Now".
@@ -160,7 +163,7 @@ def cumulative_chart(forecast):
     })
     return chart
 
-
+# The following functions generate the SVG elements for the cumulative and monthly forecast charts. They use the Monte Carlo forecast data and the monthly history to create the chart geometry, including axes, ticks, labels, bars, ranges, and paths for the fan chart and bar chart.
 def monthly_chart(history, forecast):
     """
     Bars for recent actual monthly net, then forecast ranges per month.
@@ -180,12 +183,13 @@ def monthly_chart(history, forecast):
     slots = len(past) + len(bands)
     slot_width = (PLOT_RIGHT - PLOT_LEFT) / slots
     bar_width = round(slot_width * 0.6, 2)
-
+    # The center of each bar or range is at the center of its slot.
     def center(i):
         return round(PLOT_LEFT + (i + 0.5) * slot_width, 2)
 
     zero_y = y(0)
     bars = []
+    # Build a bar for each past month, with a tooltip showing the actual net.
     for i, m in enumerate(past):
         net = float(m["net"])
         top = min(y(net), zero_y)
@@ -202,6 +206,7 @@ def monthly_chart(history, forecast):
             "tooltip": f"{m['label']} (actual): {money(net)}",
         })
 
+    # Build a range for each future month, with a tooltip showing the likely range and typical value.
     ranges = []
     for j, b in enumerate(bands):
         i = len(past) + j
@@ -221,6 +226,7 @@ def monthly_chart(history, forecast):
             ),
         })
 
+    # Build the chart frame and add the ticks, bars, ranges, and divider between past and forecast.
     chart = _frame(y)
     chart.update({
         "ticks": ticks,
@@ -231,7 +237,7 @@ def monthly_chart(history, forecast):
     })
     return chart
 
-
+# The following functions generate the SVG elements for the cumulative and monthly forecast charts. They use the Monte Carlo forecast data and the monthly history to create the chart geometry, including axes, ticks, labels, bars, ranges, and paths for the fan chart and bar chart.
 def forecast_charts(history, forecast):
     """Both charts for the template, or None when there's no forecast."""
     if not forecast:

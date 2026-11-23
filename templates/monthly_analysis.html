@@ -187,15 +187,22 @@
                     {{ forecast.months }} months.
                 </p>
 
+                <!-- Forecast visualization charts (monthly analysis page) -->
+                <!-- Co-Authored by Claude code using Opus5.5 on 11/21/26, verified by Aidan -->
                 {% if charts %}
                 {% set c = charts.cumulative %}
                 <div class="forecast-chart">
 
                     <h3>Projected Running Total</h3>
 
+                    <!-- The chart shows the projected running total of net cash over the next
+                         {{ forecast.months }} months, based on the simulations. The
+                         band shows the range from the 10th percentile (bad case) to
+                         the 90th percentile (good case). The median line shows the
+                         typical outcome. -->
                     <svg viewBox="0 0 {{ c.width }} {{ c.height }}" role="img"
                          aria-label="Projected running total of net cash over the next {{ forecast.months }} months">
-
+                        <!-- The grid lines and labels for the y-axis (running total) -->
                         {% for tick in c.ticks %}
                             <line class="chart-grid" x1="{{ c.plot_left }}" x2="{{ c.plot_right }}" y1="{{ tick.y }}" y2="{{ tick.y }}"></line>
                             <text class="chart-axis-label" x="{{ c.plot_left - 8 }}" y="{{ tick.y }}" text-anchor="end" dominant-baseline="middle">{{ tick.label }}</text>
@@ -205,7 +212,7 @@
 
                         <path class="chart-band" d="{{ c.band_path }}"></path>
                         <path class="chart-median" d="{{ c.median_path }}"></path>
-
+                        <!-- The points for each month, with tooltips showing the projected running total -->
                         {% for point in c.points %}
                             <circle class="chart-point" cx="{{ point.x }}" cy="{{ point.y }}" r="5">
                                 <title>{{ point.tooltip }}</title>
@@ -224,20 +231,26 @@
                     </div>
 
                 </div>
-
+                <!-- Monthly net cash flow chart -->
                 {% set m = charts.monthly %}
                 <div class="forecast-chart">
-
+                    <!-- The chart shows the projected net cash flow for each of the next
+                         {{ forecast.months }} months, based on the simulations. The
+                         bars show the actual net cash flow for recent months, and the
+                         bands show the range from the 10th percentile (bad case) to
+                         the 90th percentile (good case) for future months. The median
+                         line shows the typical outcome. -->
+                         <!-- Co-Authored by Claude code using Opus5.5 on 11/21/26, verified by Aidan -->
                     <h3>Monthly Net: Recent vs. Forecast</h3>
 
                     <svg viewBox="0 0 {{ m.width }} {{ m.height }}" role="img"
                          aria-label="Actual net for recent months followed by the forecast range for each future month">
-
+                        <!-- The grid lines and labels for the y-axis (net cash flow) -->
                         {% for tick in m.ticks %}
                             <line class="chart-grid" x1="{{ m.plot_left }}" x2="{{ m.plot_right }}" y1="{{ tick.y }}" y2="{{ tick.y }}"></line>
                             <text class="chart-axis-label" x="{{ m.plot_left - 8 }}" y="{{ tick.y }}" text-anchor="end" dominant-baseline="middle">{{ tick.label }}</text>
                         {% endfor %}
-
+                        <!-- The bars for each month, with tooltips showing the actual or projected net cash flow -->
                         {% for bar in m.bars %}
                             <rect class="{{ 'chart-bar-negative' if bar.negative else 'chart-bar-positive' }}"
                                   x="{{ bar.x }}" y="{{ bar.y }}" width="{{ bar.width }}" height="{{ bar.height }}" rx="2">
@@ -246,7 +259,7 @@
                             <text class="chart-axis-label" x="{{ bar.center }}" y="{{ m.plot_bottom + 22 }}" text-anchor="middle">{{ bar.label }}</text>
                             <text class="chart-axis-label" x="{{ bar.center }}" y="{{ m.plot_bottom + 38 }}" text-anchor="middle">{{ bar.year }}</text>
                         {% endfor %}
-
+                        <!-- The forecast ranges for each future month, with tooltips showing the projected range of net cash flow -->
                         {% for range in m.ranges %}
                             <g>
                                 <title>{{ range.tooltip }}</title>
@@ -256,7 +269,7 @@
                             <text class="chart-axis-label" x="{{ range.center }}" y="{{ m.plot_bottom + 22 }}" text-anchor="middle">{{ range.label }}</text>
                             <text class="chart-axis-label" x="{{ range.center }}" y="{{ m.plot_bottom + 38 }}" text-anchor="middle">{{ range.year }}</text>
                         {% endfor %}
-
+                        <!-- The zero line for reference -->
                         <line class="chart-zero" x1="{{ m.plot_left }}" x2="{{ m.plot_right }}" y1="{{ m.zero_y }}" y2="{{ m.zero_y }}"></line>
 
                         {% if m.divider_x %}
@@ -265,7 +278,7 @@
                         {% endif %}
 
                     </svg>
-
+                    <!-- The legend explains the colors and symbols used in the chart -->
                     <div class="chart-legend">
                         <span><i class="legend-swatch legend-positive"></i>Actual surplus</span>
                         <span><i class="legend-swatch legend-negative"></i>Actual deficit</span>
