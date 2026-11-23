@@ -187,8 +187,45 @@
                     {{ forecast.months }} months.
                 </p>
 
-                <!-- Forecast visualization charts (monthly analysis page) -->
-                <!-- Co-Authored by Claude code using Opus5.5 on 11/21/26, verified by Aidan -->
+                {# Forecast confidence intervals (Req 21) #}
+                <h3>Month-by-Month Range ({{ forecast.confidence_level }}% confidence)</h3>
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Time from now</th>
+                            <th>Low</th>
+                            <th>Typical</th>
+                            <th>High</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for interval in forecast.intervals %}
+                        <tr>
+                            <td>After {{ interval.month }} month{{ "s" if interval.month != 1 }}</td>
+                            {% for value in [interval.low, interval.median, interval.high] %}
+                            <td>
+                                {% if value < 0 %}
+                                    <span style="color:red">-${{ "%.2f"|format(value|abs) }}</span>
+                                {% else %}
+                                    <span style="color:green">${{ "%.2f"|format(value) }}</span>
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+
+                <p>
+                    In {{ forecast.confidence_level }}% of simulated futures, your total
+                    net from now until that month falls between Low and High.
+                    The range widens further out because each month adds more
+                    uncertainty.
+                </p>
                 {% if charts %}
                 {% set c = charts.cumulative %}
                 <div class="forecast-chart">
@@ -300,7 +337,7 @@
 
         </div>
 
-        <div class="card">
+                <div class="card">
 
             <h2>Income Stability Score</h2>
 
@@ -342,7 +379,7 @@
             {% endif %}
 
         </div>
-
+        
         {% else %}
 
         <div class="card">

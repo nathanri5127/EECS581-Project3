@@ -17,6 +17,8 @@ Dependencies:
 
 import pandas as pd
 from services.categorizer import auto_categorize
+from datetime import datetime
+
 DATE_COLUMNS = [
     "date",
     "transaction date",
@@ -85,8 +87,21 @@ def parse_transactions(file):
         )
 
     transactions = []
+    skipped_rows = 0
 
     for _, row in df.iterrows():
+        try:
+            date = str(
+                row[date_col]
+            ).strip()
+            datetime.strptime(
+                date,
+                "%Y-%m-%d"
+            )
+        except Exception:
+            skipped_rows += 1
+            continue
+
         description = row[description_col]
         amount = float(row[amount_col])
 
@@ -111,4 +126,4 @@ def parse_transactions(file):
             "category":
                 category
         })
-    return transactions
+    return (transactions, skipped_rows)
